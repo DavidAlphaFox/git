@@ -5,7 +5,8 @@ struct object_list {
 	struct object *item;
 	struct object_list *next;
 };
-
+// 定义ObjectArray
+// 并在内部定义ObjectArrayEntry
 struct object_array {
 	unsigned int nr;
 	unsigned int alloc;
@@ -44,6 +45,8 @@ struct object_array {
 /*
  * The object type is stored in 3 bits.
  */
+// 真正的一个object的定义
+// 其中类型使用3bits来定义，可以定义8种类型
 struct object {
 	unsigned parsed : 1;
 	unsigned used : 1;
