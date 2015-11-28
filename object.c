@@ -17,7 +17,8 @@ struct object *get_indexed_object(unsigned int idx)
 {
 	return obj_hash[idx];
 }
-
+// 定义对象为commit,blob和tree
+// 其中blob为文件，tree为目录，而commit是用来追踪历史
 static const char *object_type_strings[] = {
 	NULL,		/* OBJ_NONE = 0 */
 	"commit",	/* OBJ_COMMIT = 1 */
@@ -56,6 +57,7 @@ int type_from_string_gently(const char *str, ssize_t len, int gentle)
  * the specified sha1.  n must be a power of 2.  Please note that the
  * return value is *not* consistent across computer architectures.
  */
+// 快速的找出一个hash对象应当放入hash表中的位置
 static unsigned int hash_obj(const unsigned char *sha1, unsigned int n)
 {
 	return sha1hash(sha1) & (n - 1);
@@ -66,6 +68,7 @@ static unsigned int hash_obj(const unsigned char *sha1, unsigned int n)
  * must be a power of 2).  On collisions, simply overflow to the next
  * empty bucket.
  */
+// 将某个对象放入hash表中
 static void insert_obj_hash(struct object *obj, struct object **hash, unsigned int size)
 {
 	unsigned int j = hash_obj(obj->sha1, size);
@@ -116,6 +119,7 @@ struct object *lookup_object(const unsigned char *sha1)
  * power of 2 (but at least 32).  Copy the existing values to the new
  * hash map.
  */
+// 增大hash表
 static void grow_object_hash(void)
 {
 	int i;
@@ -137,7 +141,7 @@ static void grow_object_hash(void)
 	obj_hash = new_hash;
 	obj_hash_size = new_hash_size;
 }
-
+// 初始化一个新的对象
 void *create_object(const unsigned char *sha1, void *o)
 {
 	struct object *obj = o;
@@ -146,7 +150,7 @@ void *create_object(const unsigned char *sha1, void *o)
 	obj->used = 0;
 	obj->flags = 0;
 	hashcpy(obj->sha1, sha1);
-
+	//确保hash表始终是半满的
 	if (obj_hash_size - 1 <= nr_objs * 2)
 		grow_object_hash();
 
